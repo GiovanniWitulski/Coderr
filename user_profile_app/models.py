@@ -21,6 +21,7 @@ class UserProfile(models.Model):
     description = models.TextField(blank=True, default='')
     working_hours = models.CharField(max_length=100, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
+    uploaded_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.get_type_display()}"
