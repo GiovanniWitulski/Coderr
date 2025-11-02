@@ -24,7 +24,7 @@ class OrderSerializer(serializers.ModelSerializer):
             'delivery_time_in_days', 'price', 'features', 'offer_type', 
             'status', 'created_at', 'updated_at', 'offer_detail_id'
         ]
-        read_only_fields = ['status', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
 
     def create(self, validated_data):
         offer_detail = validated_data.get('offer_detail')
@@ -38,3 +38,8 @@ class OrderSerializer(serializers.ModelSerializer):
             total_price=offer_detail.price
         )
         return order
+
+    def update(self, instance, validated_data):
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+        return instance
