@@ -21,8 +21,10 @@ from core.views import base_info_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/base-info/', base_info_view, name='base-info'),
+    
     path('api/', include('offers_app.api.urls')),
     path('api/', include('orders_app.api.urls')),
     path('api/', include('reviews_app.api.urls')),
-    path('api/base-info/', base_info_view, name='base-info'),
+    path('api/', include('user_profile_app.api.urls')),
 ]
