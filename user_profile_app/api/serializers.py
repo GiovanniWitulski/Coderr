@@ -30,19 +30,32 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'tel',            
             'description',    
             'working_hours',  
-            'created_at',     
+            'created_at',
         ]
         read_only_fields = ['user', 'type', 'created_at'] 
 
     def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', {}) 
+        user = instance.user
+        user.first_name = user_data.get('first_name', user.first_name)
+        user.last_name = user_data.get('last_name', user.last_name)
+        user.email = user_data.get('email', user.email)
+        user.save()
         instance = super().update(instance, validated_data)
+        instance.save()
         return instance
 
-def to_representation(self, instance):
+    def to_representation(self, instance):
         representation = super().to_representation(instance)
-        fields_to_format = ['location', 'tel', 'description', 'working_hours']
+        user_representation = UserSerializer(instance.user).data
+        representation['username'] = user_representation.get('username')
+        representation['first_name'] = user_representation.get('first_name') or ''
+        representation['last_name'] = user_representation.get('last_name') or ''
+        representation['email'] = user_representation.get('email')
+
+        fields_to_format = ['location', 'tel', 'description', 'working_hours', 'file']
         for field in fields_to_format:
-            if representation[field] is None:
+            if representation.get(field) is None:
                 representation[field] = ''
         return representation
 
