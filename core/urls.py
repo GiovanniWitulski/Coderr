@@ -17,11 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from core.views import base_info_view
+from core.views import BaseInfoView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/base-info/', base_info_view, name='base-info'),
+    path('api/base-info/', BaseInfoView.as_view(), name='base-info'),
     
     path('api/', include('offers_app.api.urls')),
     path('api/', include('orders_app.api.urls')),
