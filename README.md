@@ -112,16 +112,10 @@ If you need to re-create your `requirements.txt` file, here is the list of depen
 
 ```txt
 asgiref==3.9.1
-bcrypt==4.3.0
-cffi==1.17.1
-cryptography==45.0.5
-Django==5.2.4
-django-cors-headers==4.7.0
-djangorestframework==3.15.2
-numpy==2.3.1
-paramiko==3.5.1
-pycparser==2.22
-PyNaCl==1.5.0
+Django==5.2.6
+django-cors-headers==4.9.0
+djangorestframework==3.16.1
+pillow==11.3.0
 sqlparse==0.5.3
 tzdata==2025.2
 ```
