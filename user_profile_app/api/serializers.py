@@ -47,30 +47,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'created_at',
         ]
         read_only_fields = ['user', 'type', 'created_at'] 
-
+    
     def update(self, instance, validated_data):
         """
-        Overrides the default update to handle nested writes to the User model.
+        Overrides the default update method to handle nested User fields. 
         """
-
-        # Pop the nested 'user' data (first_name, etc.) if it exists.
-        user_model_data = {}
-        if 'first_name' in validated_data:
-            user_model_data['first_name'] = validated_data.pop('first_name')
-        if 'last_name' in validated_data:
-            user_model_data['last_name'] = validated_data.pop('last_name')
-        if 'email' in validated_data:
-            user_model_data['email'] = validated_data.pop('email')
         
-        # Get the related user object and update it
+        # extract and remove User-related data
+        user_data = validated_data.pop('user', {})
+
+        # update User fields
         user = instance.user
-        for key, value in user_model_data.items():
-            setattr(user, key, value)
+        for attr, value in user_data.items():
+             setattr(user, attr, value)
         user.save()
 
-        # Update the UserProfile instance with the remaining data
-        instance = super().update(instance, validated_data)
+        # update UserProfile fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
         instance.save()
+        
         return instance
 
     def to_representation(self, instance):
