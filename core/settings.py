@@ -133,6 +133,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'offers_app.api.pagination.StandardResultsSetPagination',
     
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication', 
+    ],
+    
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',  
         'rest_framework.throttling.UserRateThrottle'
@@ -144,6 +149,6 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",  # Dein Frontend-Server (Live Server)
-    "http://localhost:5500",   # Oft ein guter Zusatz
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
 ]
