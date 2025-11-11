@@ -5,6 +5,7 @@ Defines how Offer and OfferDetail models are converted to and from JSON.
 
 from rest_framework import serializers
 from ..models import Offer, OfferDetail
+from django.db.models import Min
 
 class OfferDetailSerializer(serializers.ModelSerializer):
     """
@@ -26,13 +27,29 @@ class OfferSerializer(serializers.ModelSerializer):
     # It uses OfferDetailSerializer and expects a list.
     details = OfferDetailSerializer(many=True)
 
+    user = serializers.ReadOnlyField(source='creator.id')
+    min_price = serializers.SerializerMethodField()
+    min_delivery_time = serializers.SerializerMethodField()
+
     class Meta:
         model = Offer
-        fields = ['id', 'creator', 'title', 'description', 'image', 'details', 'created_at', 'updated_at']
+        fields = ['id', 'user', 'title', 'description', 'image', 'details', 'created_at', 'updated_at', 'min_price', 'min_delivery_time']
         extra_kwargs = {
-            # 'creator' is set automatically by the view (perform_create),
-            'creator': {'read_only': True}
+            # 'user' (-> creator) is set automatically by the view (perform_create),
+            'user': {'read_only': True}
         }
+
+    def get_min_price(self, obj):
+        if hasattr(obj, 'min_price') and obj.min_price is not None:
+            return obj.min_price
+        aggregate = obj.details.aggregate(min_price=Min('price'))
+        return aggregate.get('min_price')
+
+    def get_min_delivery_time(self, obj):
+        if hasattr(obj, 'min_delivery_time') and obj.min_delivery_time is not None:
+            return obj.min_delivery_time
+        aggregate = obj.details.aggregate(min_time=Min('delivery_time_in_days'))
+        return aggregate.get('min_time')
 
     def create(self, validated_data):
         """
@@ -48,5 +65,27 @@ class OfferSerializer(serializers.ModelSerializer):
         # Loop through the details and create OfferDetail objects
         for detail_data in details_data:
             OfferDetail.objects.create(offer=offer, **detail_data)
-            
         return offer
+    
+    def update(self, instance, validated_data):
+        """
+        Overrides the default update method to handle nested 'details' update.
+        """
+        details_data = validated_data.pop('details', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        if details_data:
+            for detail_data in details_data:
+                offer_type = detail_data.get('offer_type')
+                if offer_type:
+                    try:
+                        detail_to_update = instance.details.get(offer_type=offer_type)
+                        for key, value in detail_data.items():
+                            setattr(detail_to_update, key, value)
+                        detail_to_update.save()
+                    except OfferDetail.DoesNotExist:
+                        pass
+        return instance
