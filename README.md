@@ -114,6 +114,7 @@ If you need to re-create your `requirements.txt` file, here is the list of depen
 asgiref==3.9.1
 Django==5.2.6
 django-cors-headers==4.9.0
+django-filter==25.2
 djangorestframework==3.16.1
 pillow==11.3.0
 sqlparse==0.5.3
