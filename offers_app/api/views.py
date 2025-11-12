@@ -59,7 +59,7 @@ class OfferViewSet(viewsets.ModelViewSet):
         Dynamically assigns permissions based on the request action.
         """
         if self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [IsOwnerOrReadOnly]
+            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
         elif self.action == 'create':
             permission_classes = [IsBusinessUser]
         elif self.action == 'list':
