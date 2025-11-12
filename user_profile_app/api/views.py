@@ -29,7 +29,7 @@ class UserProfileViewSet(mixins.RetrieveModelMixin,
         if self.action in ['update', 'partial_update']:
             permission_classes = [permissions.IsAuthenticated, IsOwner]
         else: 
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [permissions.IsAuthenticated]
 
         return [permission() for permission in permission_classes]
 
@@ -98,7 +98,7 @@ class BusinessProfileListView(generics.ListAPIView):
 
     queryset = UserProfile.objects.filter(type=UserProfile.UserType.BUSINESS).order_by('user__username')
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
 
 class CustomerProfileListView(generics.ListAPIView):
@@ -108,5 +108,5 @@ class CustomerProfileListView(generics.ListAPIView):
 
     queryset = UserProfile.objects.filter(type=UserProfile.UserType.CUSTOMER).order_by('user__username')
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
