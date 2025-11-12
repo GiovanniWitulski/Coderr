@@ -42,6 +42,7 @@ class OrderViewSet(mixins.CreateModelMixin,
         if not self.request.user.is_authenticated:
              return Order.objects.none() 
         user_profile = self.request.user.profile
+
         # Use Q objects to filter with an OR condition
         return Order.objects.filter(
             Q(customer=user_profile) | Q(business=user_profile)
@@ -57,12 +58,12 @@ class OrderViewSet(mixins.CreateModelMixin,
             permission_classes = [IsAuthenticated, IsCustomerUser]
         elif self.action in ['update', 'partial_update']:
             # Only the authenticated business owner of the order can update
-            permission_classes = [IsAuthenticated, IsBusinessUser, IsOwnerOfOrder]
+            permission_classes = [IsAuthenticated, IsOwnerOfOrder]
         elif self.action == 'destroy':
             # Only admin users can delete
             permission_classes = [IsAdminUser]
-        else: # 'list' and 'retrieve' actions
-            permission_classes = [AllowAny]
+        else: 
+            permission_classes = [IsAuthenticated]
             
         return [permission() for permission in permission_classes]
     
