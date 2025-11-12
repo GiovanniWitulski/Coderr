@@ -6,6 +6,7 @@ Provides the viewsets for:
 - OfferDetailViewSet: Read-only access for OfferDetail objects.
 """
 
+from django.forms import ValidationError
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from offers_app.api.filters import OfferFilter
@@ -44,6 +45,15 @@ class OfferViewSet(viewsets.ModelViewSet):
             min_delivery_time=Min('details__delivery_time_in_days')
         ).all().order_by('-updated_at')
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        filterset = self.filterset_class(request.GET, queryset=queryset, request=request)
+        
+        if not filterset.is_valid():
+            raise ValidationError(filterset.errors)
+            
+        return super().list(request, *args, **kwargs)
+
     def get_permissions(self):
         """
         Dynamically assigns permissions based on the request action.
@@ -52,7 +62,7 @@ class OfferViewSet(viewsets.ModelViewSet):
             permission_classes = [IsOwnerOrReadOnly]
         elif self.action == 'create':
             permission_classes = [IsBusinessUser]
-        elif self.action in ['list', 'retrieve']:
+        elif self.action == 'list':
             permission_classes = [AllowAny]
         else:
             permission_classes = [IsAuthenticated]
@@ -72,5 +82,4 @@ class OfferDetailViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = OfferDetail.objects.all()
     serializer_class = OfferDetailSerializer
-    # Set to AllowAny to accommodate frontend client behavior
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
