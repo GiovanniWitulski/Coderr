@@ -46,6 +46,10 @@ class OfferViewSet(viewsets.ModelViewSet):
         ).all().order_by('-updated_at')
 
     def list(self, request, *args, **kwargs):
+        """
+        Lists all offers with explicit filter validation.
+        """
+
         queryset = self.get_queryset()
         filterset = self.filterset_class(request.GET, queryset=queryset, request=request)
         
@@ -65,6 +69,7 @@ class OfferViewSet(viewsets.ModelViewSet):
         elif self.action == 'list':
             permission_classes = [AllowAny]
         else:
+            # Default for 'retrieve' and any custom actions
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
