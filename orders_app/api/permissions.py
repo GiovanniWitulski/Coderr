@@ -30,12 +30,21 @@ class IsOwnerOfOrder(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         """
-        Checks if the request.user's profile is either the customer
-        or the business on the order object.
+        Checks if the request user has permission to access the specific order object.
         """
+
+        # Check if the user is either the customer or the business user associated with the order
+        is_owner = obj.customer == request.user.profile or obj.business == request.user.profile
+
+        # If the user is neither, deny access immediately
+        if not is_owner:
+            return False
         
-        # obj is the Order instance
-        return obj.customer == request.user.profile or obj.business == request.user.profile
+        # Only 'business' profiles are allowed to update/patch the order
+        if view.action in ['update', 'partial_update']:
+            return request.user.profile.type == 'business'
+
+        return True
     
 
 class IsCustomerUser(permissions.BasePermission):
