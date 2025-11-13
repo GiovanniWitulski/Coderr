@@ -6,7 +6,7 @@ Provides the viewsets for:
 - OfferDetailViewSet: Read-only access for OfferDetail objects.
 """
 
-from django.forms import ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from offers_app.api.filters import OfferFilter
