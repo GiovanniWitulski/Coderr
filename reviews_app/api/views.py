@@ -4,7 +4,7 @@ Provides the ReviewViewSet for full CRUD functionality on Review models.
 """
 
 from rest_framework import viewsets, mixins, filters
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from ..models import Review
 from .serializers import ReviewSerializer
