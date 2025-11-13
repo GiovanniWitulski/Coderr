@@ -41,8 +41,8 @@ Follow these steps to get the project running locally.
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-    cd YOUR-REPOSITORY
+    git clone https://github.com/GiovanniWitulski/Coderr
+    cd coderr
     ```
 
 2.  **Create and Activate a Virtual Environment:**
