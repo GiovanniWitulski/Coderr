@@ -43,7 +43,6 @@ class ReviewViewSet(mixins.CreateModelMixin,
             #Only the review owner can modify.
             permission_classes = [IsAuthenticated, IsReviewOwner]
         else:
-            # Allow public access for reading reviews
-            permission_classes = [AllowAny]
+            permission_classes = [IsAuthenticated]
             
         return [permission() for permission in permission_classes]
