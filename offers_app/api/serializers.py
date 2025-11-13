@@ -50,6 +50,15 @@ class OfferSerializer(serializers.ModelSerializer):
             return obj.min_delivery_time
         aggregate = obj.details.aggregate(min_time=Min('delivery_time_in_days'))
         return aggregate.get('min_time')
+    
+    def validate(self, data):
+        if self.instance and 'details' in data:
+            for detail in data['details']:
+                if 'offer_type' not in detail:
+                    raise serializers.ValidationError(
+                        {"details": "The 'offer_type' must be provided to update details."}
+                    )
+        return data
 
     def create(self, validated_data):
         """
