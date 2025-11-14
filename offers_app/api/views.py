@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from offers_app.api.filters import OfferFilter
 from offers_app.api.permissions import IsOwnerOrReadOnly, IsBusinessUser
 from ..models import Offer, OfferDetail
-from .serializers import OfferDetailSerializer, OfferSerializer
+from .serializers import OfferDetailSerializer, OfferListRetrieveSerializer, OfferCreateUpdateSerializer
 from .pagination import StandardResultsSetPagination 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, filters
@@ -25,7 +25,6 @@ class OfferViewSet(viewsets.ModelViewSet):
     Permissions are handled dynamically based on the action.
     """
 
-    serializer_class = OfferSerializer
     pagination_class = StandardResultsSetPagination 
 
     filter_backends = [
@@ -38,6 +37,17 @@ class OfferViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description']
     ordering_fields = ['updated_at', 'min_price']
     ordering = ['-updated_at']
+
+    def get_serializer_class(self):
+        """
+        Return the appropriate serializer class based on the action.
+        """
+        
+        if self.action in ['list', 'retrieve']:
+            return OfferListRetrieveSerializer
+        if self.action in ['create', 'update', 'partial_update']:
+            return OfferCreateUpdateSerializer
+        return OfferListRetrieveSerializer
 
     def get_queryset(self):
         return Offer.objects.annotate(
