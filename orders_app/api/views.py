@@ -84,10 +84,10 @@ class OrderCountView(APIView):
 
         try:
             # Validate that the ID belongs to a real business user
-            UserProfile.objects.get(id=business_user_id, type=UserProfile.UserType.BUSINESS)
+            profile = UserProfile.objects.get(user_id=business_user_id, type=UserProfile.UserType.BUSINESS)
             # Filter orders by business_id and status
             count = Order.objects.filter(
-                business_id=business_user_id, 
+                business_id=profile.id, 
                 status=Order.Status.IN_PROGRESS
             ).count()
             return Response({"order_count": count}, status=status.HTTP_200_OK)
@@ -111,12 +111,13 @@ class CompletedOrderCountView(APIView):
         Handles the GET request for counting completed orders.
         Validates the business_user_id and returns the count.
         """
+        
         try:
             # Validate that the ID belongs to a real business user
-            UserProfile.objects.get(id=business_user_id, type=UserProfile.UserType.BUSINESS)
+            profile = UserProfile.objects.get(user_id=business_user_id, type=UserProfile.UserType.BUSINESS)
             # Filter orders by business_id and status
             count = Order.objects.filter(
-                business_id=business_user_id, 
+                business_id=profile.id, 
                 status=Order.Status.COMPLETED
             ).count()
             return Response({"completed_order_count": count}, status=status.HTTP_200_OK)
