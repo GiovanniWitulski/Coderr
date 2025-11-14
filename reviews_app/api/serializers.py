@@ -42,16 +42,24 @@ class ReviewSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         """
-        Validates that the user has not already submitted a review
-        for this business.
+        Validates uniqueness, considering both create and update operations.
         """
-
-        business_user = data.get('business_user')
-        # Get the reviewer's profile from the request context
-        reviewer = self.context['request'].user.profile
         
-        # Check if a review from this reviewer for this business already exists
-        if Review.objects.filter(business_user=business_user, reviewer=reviewer).exists():
+        reviewer = self.context['request'].user.profile
+        business_user = data.get('business_user')
+
+        if not business_user and self.instance:
+            return data
+        
+        if not business_user and not self.instance:
+             return data
+
+        query = Review.objects.filter(business_user=business_user, reviewer=reviewer)
+
+        if self.instance:
+            query = query.exclude(pk=self.instance.pk)
+
+        if query.exists():
             raise serializers.ValidationError("You have already submitted a review for this provider.")
             
         return data
