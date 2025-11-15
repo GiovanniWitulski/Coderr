@@ -42,25 +42,47 @@ class ReviewSerializer(serializers.ModelSerializer):
     
     def validate(self, data):
         """
-        Validates uniqueness, considering both create and update operations.
+        Validates the uniqueness of the (reviewer, business_user) pair.
+
+        This method ensures that a user (reviewer) can only submit one review
+        for a specific business_user. It correctly handles both 'create' (POST) 
+        and 'update' (PUT/PATCH) operations.
         """
-        
+
+        # Get the reviewer from the authenticated user's profile
         reviewer = self.context['request'].user.profile
-        business_user = data.get('business_user')
-
-        if not business_user and self.instance:
-            return data
         
-        if not business_user and not self.instance:
-             return data
+        # Determine the 'business_user' being reviewed.
+        if self.instance:
+            # This is a PATCH/PUT (Update) operation.
+            business_user = data.get('business_user', self.instance.business_user)
+        else:
+            # This is a POST (Create) operation.
+            business_user = data.get('business_user')
 
-        query = Review.objects.filter(business_user=business_user, reviewer=reviewer)
+        # The PrimaryKeyRelatedField should already prevent 'None' on POST,
+        # but we add this check for extra safety.
+        if not business_user and not self.instance:
+            raise serializers.ValidationError(
+                {"business_user": "This field is required."}
+            )
+
+        # Perform the uniqueness check:
+        # Has this 'reviewer' already submitted a review for this 'business_user'?
+        query = Review.objects.filter(
+            business_user=business_user, 
+            reviewer=reviewer
+        )
 
         if self.instance:
+            # On update, exclude the object itself from the check.
             query = query.exclude(pk=self.instance.pk)
 
         if query.exists():
-            raise serializers.ValidationError("You have already submitted a review for this provider.")
+            # If the query returns any results, a review already exists.
+            raise serializers.ValidationError(
+                "You have already submitted a review for this provider."
+            )
             
         return data
 
