@@ -18,9 +18,12 @@ Including another URLconf
 # Django Imports
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Local Imports
 from core.views import BaseInfoView
+from core import settings
 
 urlpatterns = [
     # 1. Django Admin Interface
@@ -35,4 +38,4 @@ urlpatterns = [
     path('api/', include('orders_app.api.urls')),
     path('api/', include('reviews_app.api.urls')),
     path('api/', include('user_profile_app.api.urls')),
-]
+] + staticfiles_urlpatterns()
