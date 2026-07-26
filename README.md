@@ -9,7 +9,7 @@ Welcome to the backend API for **Coderr**, a service and freelancer platform. Th
 
 It handles user authentication, profiles (for customers and businesses), service listings (offers), orders, and reviews.
 
-## 🚀 Features
+## Features
 
 * **Token Authentication:** Full user registration (`/api/registration/`) and login (`/api/login/`) using DRF Token Authentication.
 * **Dual User Roles:** Clear separation between `customer` and `business` user types, each with different permissions.
@@ -18,7 +18,7 @@ It handles user authentication, profiles (for customers and businesses), service
 * **Review System:** Customers can write and manage reviews for businesses they've worked with.
 * **Aggregate Data:** A global endpoint (`/api/base-info/`) provides platform-wide statistics like total review count and average rating.
 
-## 💻 Tech Stack
+## Tech Stack
 
 * **Backend:** Python
 * **Framework:** Django (Version 5.2.4)
@@ -27,7 +27,7 @@ It handles user authentication, profiles (for customers and businesses), service
 * **Database:** SQLite 3 (Default for development)
 * **Authentication:** Django TokenAuthentication
 
-## 🛠️ Installation & Setup
+## Installation & Setup
 
 Follow these steps to get the project running locally.
 
@@ -83,7 +83,7 @@ Follow these steps to get the project running locally.
 
 ---
 
-## 🌐 Core API Endpoints
+## Core API Endpoints
 
 All endpoints are prefixed with `/api/`.
 
@@ -106,7 +106,7 @@ All endpoints are prefixed with `/api/`.
 
 ---
 
-## 📋 `requirements.txt`
+## `requirements.txt`
 
 If you need to re-create your `requirements.txt` file, here is the list of dependencies based on your `pip freeze` output and known project structure.
 
